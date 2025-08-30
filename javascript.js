@@ -1,5 +1,4 @@
 function gameBoard() {
-  console.log('this be gameboard');
 
   const rows = 3;
   const columns = 3;
@@ -17,11 +16,13 @@ function gameBoard() {
     return board;
   };
 
-  function dropMark() {
-    //
+  function dropMark(row, column, player) {
+ 
+    if (board[row][column] == 'o' || board[row][column] == 'x') return;
+
+    board[row][column].addMark(player);
+
   };
-
-
 
   function printBoard() {
 
@@ -43,8 +44,8 @@ function Cell() {
 
   let value = '';
 
-  function addMark() {
-    value = 'x';
+  function addMark(player) {
+    value = player;
   };
 
   function getValue() {
@@ -57,16 +58,16 @@ function Cell() {
 
 function GameController() {
 
-  const board = Gameboard();
+  const board = gameBoard();
 
   const players = [
     {
       name: 'playerOne',
-      token: 1
+      token: 'x'
     },
     {
       name: 'playerTwo',
-      token: 2
+      token: 'o'
     }
   ];
 
@@ -87,17 +88,23 @@ function GameController() {
     );
   };
 
-  function playRound() {
+  function playRound(row, column) {
 
     console.log(
-      `Adding ${getActivePlayer}'s mark into board`
+      `Adding ${getActivePlayer().name}'s mark into board`
     );
 
-    board.dropMark();
+    board.dropMark(row, column, getActivePlayer().token);
 
     switchPlayerTurn();
     printNewRound();
+    
   };
 
+  printNewRound();
+
+  return {playRound, getActivePlayer};
 
 };
+
+game = GameController();
