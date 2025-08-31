@@ -18,10 +18,70 @@ function gameBoard() {
 
   function dropMark(row, column, player) {
  
-    if (board[row][column] == 'o' || board[row][column] == 'x') return;
+    if (board[row][column].getValue() == 'o' || board[row][column].getValue() == 'x') { 
 
-    board[row][column].addMark(player);
+      return 'occupied'; 
 
+    } else {
+
+      board[row][column].addMark(player);
+
+    };
+
+    for (i = 0; i < 3; i++) {
+
+      var winConRow = board[i][0].getValue() + board[i][1].getValue() + board[i][2].getValue();
+
+      if (winConRow == 'xxx' || winConRow == 'ooo' ) {
+        
+        console.log('winConRow is: ' + winConRow);
+        
+        return 'gameOver';
+
+      };
+
+    };
+
+    for (i = 0; i < 3; i++) {
+
+      var winConColumn = board[0][i].getValue() + board[1][i].getValue() + board[2][i].getValue();
+
+      if (winConColumn == 'xxx' || winConColumn == 'ooo' ) {
+        
+        console.log('winConColumn is: ' + winConColumn);
+        
+        return 'gameOver';
+
+      };
+
+    };
+
+   
+    var winConDiag = ''
+    for (i = 0; i < 3; i++) {
+      
+      winConDiag += board[i][i].getValue();
+
+      // console.log('winConDiag is: ' + winConDiag);
+
+      if (winConDiag == 'xxx' || winConDiag == 'ooo' ) {
+        
+        console.log('winConDiag is: ' + winConDiag);
+        
+        return 'gameOver';
+
+      };
+
+    };
+
+    winConDiag2 = board[0][2].getValue() + board[1][1].getValue() + board[2][0].getValue()
+
+    if (winConDiag2 == 'xxx' || winConDiag2 == 'ooo' ) {
+      
+      return 'gameOver';
+
+    };
+  
   };
 
   function printBoard() {
@@ -91,14 +151,30 @@ function GameController() {
   function playRound(row, column) {
 
     console.log(
-      `Adding ${getActivePlayer().name}'s mark into board`
+      `Adding ${getActivePlayer().name}'s mark onto board...`
     );
 
-    board.dropMark(row, column, getActivePlayer().token);
+    play = board.dropMark(row, column, getActivePlayer().token);
+
+    if (play == 'occupied') {
+
+      return 'Cell is already occupied!'
+
+    } else if (play == 'gameOver') {
+
+      board.printBoard();
+      
+      return getActivePlayer().name + ' WINS!!';
+
+    } else {
+
+    // console.log(board[0][1].getValue());
 
     switchPlayerTurn();
     printNewRound();
-    
+
+    };
+
   };
 
   printNewRound();
