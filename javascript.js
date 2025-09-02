@@ -62,8 +62,6 @@ function gameBoard() {
       
       winConDiag += board[i][i].getValue();
 
-      // console.log('winConDiag is: ' + winConDiag);
-
       if (winConDiag == 'xxx' || winConDiag == 'ooo' ) {
         
         console.log('winConDiag is: ' + winConDiag);
@@ -81,6 +79,19 @@ function gameBoard() {
       return 'gameOver';
 
     };
+
+    singleRow = [];
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < columns; j++) {
+        singleRow.push(board[i][j].getValue());
+      };
+    };
+    
+    if (!singleRow.includes('')) {
+      
+      return 'tie';
+
+    }
   
   };
 
@@ -92,9 +103,7 @@ function gameBoard() {
 
   };
 
-
   return {getBoard, dropMark, printBoard};
-
 
 };
 
@@ -166,9 +175,11 @@ function GameController() {
       
       return getActivePlayer().name + ' WINS!!';
 
-    } else {
+    } else if (play == 'tie') {
 
-    // console.log(board[0][1].getValue());
+      console.log('We have a TIE!!!');
+
+    } else {
 
     switchPlayerTurn();
     printNewRound();
