@@ -12,7 +12,6 @@ function gameBoard() {
   }
 
   function getBoard() {
-    console.log(typeof(board));
     return board;
   };
 
@@ -34,8 +33,6 @@ function gameBoard() {
 
       if (winConRow == 'xxx' || winConRow == 'ooo' ) {
         
-        console.log('winConRow is: ' + winConRow);
-        
         return 'gameOver';
 
       };
@@ -47,8 +44,6 @@ function gameBoard() {
       var winConColumn = board[0][i].getValue() + board[1][i].getValue() + board[2][i].getValue();
 
       if (winConColumn == 'xxx' || winConColumn == 'ooo' ) {
-        
-        console.log('winConColumn is: ' + winConColumn);
         
         return 'gameOver';
 
@@ -63,8 +58,6 @@ function gameBoard() {
       winConDiag += board[i][i].getValue();
 
       if (winConDiag == 'xxx' || winConDiag == 'ooo' ) {
-        
-        console.log('winConDiag is: ' + winConDiag);
         
         return 'gameOver';
 
@@ -106,6 +99,8 @@ function gameBoard() {
   return {getBoard, dropMark, printBoard};
 
 };
+
+gameOn = true;
 
 myBoard = gameBoard();
 
@@ -167,17 +162,23 @@ function GameController() {
 
     if (play == 'occupied') {
 
-      return 'Cell is already occupied!'
+      console.log('Cell is already occupied!');
+
+      return 'occupied'
 
     } else if (play == 'gameOver') {
 
       board.printBoard();
+
+      console.log(getActivePlayer().name + ' WINS!!');
       
-      return getActivePlayer().name + ' WINS!!';
+      return 'gameOver';
 
     } else if (play == 'tie') {
-
+      
       console.log('We have a TIE!!!');
+
+      return 'tie'
 
     } else {
 
@@ -190,8 +191,91 @@ function GameController() {
 
   printNewRound();
 
-  return {playRound, getActivePlayer};
+  return {playRound, getActivePlayer, getBoard: board.getBoard};
 
 };
 
-game = GameController();
+// game = GameController();
+
+
+function ScreenController() {
+  const playerTurnDiv = document.querySelector('.turn');
+  const boardDiv = document.querySelector('.board');
+  const game = GameController();
+
+  const updateScreen = () => {
+    // clear the board
+    boardDiv.textContent = "";
+
+    // get the newest version of the board and player turn
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+
+    // Display player's turn
+    playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
+
+    // Render board squares
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        cellButton.dataset.row = i
+        cellButton.dataset.column = j
+        cellButton.textContent = board[i][j].getValue();
+        boardDiv.appendChild(cellButton);
+      };
+    };
+  }
+
+  // Add event listener for the board
+  function clickHandlerBoard(e) {
+    const selectedRow = e.target.dataset.row;
+    const selectedColumn = e.target.dataset.column;
+    // Make sure I've clicked a column and not the gaps in between
+
+    if ((!gameOn) || (!selectedColumn)) {
+      return;
+    };
+    
+    result = game.playRound(selectedRow,selectedColumn);
+
+    if (result == 'occupied') {
+
+      updateScreen();
+
+      playerTurnDiv.textContent = 'Cell is already occupied!'
+
+    } else if (result == 'gameOver') {
+
+      gameOn = false;
+  
+      updateScreen();
+
+      playerTurnDiv.textContent = game.getActivePlayer().name + ' WINS!!'
+
+    } else if (result == 'tie') {
+
+      updateScreen();
+
+      playerTurnDiv.textContent = 'We have a TIE!!!'
+
+    } else {
+
+      updateScreen();
+
+    }
+
+  };
+
+  if (gameOn == true) {
+  boardDiv.addEventListener("click", clickHandlerBoard);
+  }
+
+  // Initial render
+  updateScreen();
+
+  // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
+}
+
+ScreenController();
