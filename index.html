@@ -8,7 +8,35 @@
 </head>
 <body>
 
+<dialog id="myDialog">
+
+    <form>
+
+        <div>
+            <label for="player1">Player One's name:</label>
+            <input type="text" id="player1">
+        </div>
+
+        <div>
+            <label for="player2">Player Two's name:</label>
+            <input type="text" id="player2">
+        </div>
+
+        <div>
+
+            <button value="cancel" formmethod="dialog">Cancel</button>
+
+            <button id="confirmBtn" value="default">Confirm</button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
 <div class="container">
+
+    <button class="nameBtn">Change names</button>
 
     <h1 class="turn"></h1>
 

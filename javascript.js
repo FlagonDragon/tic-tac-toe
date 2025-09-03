@@ -104,6 +104,9 @@ gameOn = true;
 
 myBoard = gameBoard();
 
+var playerOneName = 'Player One'
+var playerTwoName = 'Player Two'
+
 function Cell() {
 
   let value = '';
@@ -120,17 +123,17 @@ function Cell() {
 
 };
 
-function GameController() {
+function GameController () {
 
   const board = gameBoard();
 
   const players = [
     {
-      name: 'playerOne',
+      name: playerOneName,
       token: 'x'
     },
     {
-      name: 'playerTwo',
+      name: playerTwoName,
       token: 'o'
     }
   ];
@@ -191,7 +194,7 @@ function GameController() {
 
   printNewRound();
 
-  return {playRound, getActivePlayer, getBoard: board.getBoard};
+  return {players, playRound, getActivePlayer, getBoard: board.getBoard};
 
 };
 
@@ -256,6 +259,8 @@ function ScreenController() {
 
     } else if (result == 'tie') {
 
+      gameOn = false;
+
       updateScreen();
 
       playerTurnDiv.textContent = 'We have a TIE!!!'
@@ -268,9 +273,34 @@ function ScreenController() {
 
   };
 
-  if (gameOn == true) {
+  const nameBtn = document.querySelector('.nameBtn');
+  const myDialog = document.getElementById("myDialog");
+  const player1Input = myDialog.querySelector("#player1");
+  const player2Input = myDialog.querySelector("#player2");
+  const confirmBtn = myDialog.querySelector("#confirmBtn");
+
+  function nameChange () {
+    myDialog.showModal();
+  };
+
+  nameBtn.addEventListener("click", nameChange);
+
+  confirmBtn.addEventListener('click', (event) => {
+
+    event.preventDefault();
+
+    myDialog.close();
+
+    playerOneName = player1Input.value
+    playerTwoName = player2Input.value
+    game.players[0].name = playerOneName
+    game.players[1].name = playerTwoName
+
+    updateScreen();
+    
+  }); 
+
   boardDiv.addEventListener("click", clickHandlerBoard);
-  }
 
   // Initial render
   updateScreen();
