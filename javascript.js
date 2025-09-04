@@ -2,7 +2,7 @@ function gameBoard() {
 
   const rows = 3;
   const columns = 3;
-  board = [];
+  let board = [];
 
   for (let i = 0; i < rows; i++) {
     board[i] = [];
@@ -96,7 +96,19 @@ function gameBoard() {
 
   };
 
-  return {getBoard, dropMark, printBoard};
+  function newBoard () {
+
+    board = [];
+
+    for (let i = 0; i < rows; i++) {
+      board[i] = [];
+      for (let j = 0; j < columns; j++) {
+        board[i].push(Cell());
+      };
+    };
+  };
+
+  return {getBoard, dropMark, printBoard, newBoard};
 
 };
 
@@ -192,9 +204,21 @@ function GameController () {
 
   };
 
+  function restartGame () {
+    
+    board.newBoard();
+
+    if (activePlayer == players[1]) {
+      switchPlayerTurn();
+     };
+
+    gameOn = true;
+
+  }
+
   printNewRound();
 
-  return {players, playRound, getActivePlayer, getBoard: board.getBoard};
+  return {players, playRound, getActivePlayer, restartGame, getBoard: board.getBoard};
 
 };
 
@@ -207,17 +231,13 @@ function ScreenController() {
   const game = GameController();
 
   const updateScreen = () => {
-    // clear the board
+
     boardDiv.textContent = "";
 
-    // get the newest version of the board and player turn
     const board = game.getBoard();
     const activePlayer = game.getActivePlayer();
 
-    // Display player's turn
     playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
-
-    // Render board squares
 
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -231,11 +251,9 @@ function ScreenController() {
     };
   }
 
-  // Add event listener for the board
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
     const selectedColumn = e.target.dataset.column;
-    // Make sure I've clicked a column and not the gaps in between
 
     if ((!gameOn) || (!selectedColumn)) {
       return;
@@ -300,12 +318,22 @@ function ScreenController() {
     
   }); 
 
+  const restartBtn = document.querySelector('.restartBtn');
+  
+  restartBtn.addEventListener("click", () => {
+
+    console.log('yea i think im workin!');
+    
+    game.restartGame();
+
+    updateScreen();
+  
+  });
+
   boardDiv.addEventListener("click", clickHandlerBoard);
 
-  // Initial render
   updateScreen();
 
-  // We don't need to return anything from this module because everything is encapsulated inside this screen controller.
 }
 
 ScreenController();
