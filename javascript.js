@@ -273,6 +273,8 @@ function ScreenController() {
   
       updateScreen();
 
+      alert(game.getActivePlayer().name + ' WINS!!')
+
       playerTurnDiv.textContent = game.getActivePlayer().name + ' WINS!!'
 
     } else if (result == 'tie') {
